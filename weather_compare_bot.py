@@ -77,12 +77,34 @@ def _validate_canadian_city(result: dict[str, Any], city_name: str) -> None:
         raise ValueError(f"City '{city_name}' is not in Canada based on geocoding results.")
 
 
+def _env_int(name: str, default: int) -> int:
+    raw = os.getenv(name)
+    if raw is None or raw.strip() == "":
+        return default
+    try:
+        return int(raw)
+    except ValueError:
+        logging.warning("Invalid %s=%r; using default %s", name, raw, default)
+        return default
+
+
+def _env_float(name: str, default: float) -> float:
+    raw = os.getenv(name)
+    if raw is None or raw.strip() == "":
+        return default
+    try:
+        return float(raw)
+    except ValueError:
+        logging.warning("Invalid %s=%r; using default %s", name, raw, default)
+        return default
+
+
 def _requests_session() -> Any:
     import requests
     from requests.adapters import HTTPAdapter
     from urllib3.util.retry import Retry
 
-    total_retries = int(os.getenv("WEATHER_HTTP_RETRIES", "3"))
+    total_retries = _env_int("WEATHER_HTTP_RETRIES", 3)
     retry = Retry(
         total=total_retries,
         connect=total_retries,
@@ -100,8 +122,8 @@ def _requests_session() -> Any:
 
 
 def _get_json(url: str, params: dict[str, Any]) -> dict[str, Any]:
-    connect_timeout = float(os.getenv("WEATHER_CONNECT_TIMEOUT_SEC", "10"))
-    read_timeout = float(os.getenv("WEATHER_READ_TIMEOUT_SEC", "45"))
+    connect_timeout = _env_float("WEATHER_CONNECT_TIMEOUT_SEC", 10.0)
+    read_timeout = _env_float("WEATHER_READ_TIMEOUT_SEC", 45.0)
     session = _requests_session()
     response = session.get(url, params=params, timeout=(connect_timeout, read_timeout))
     response.raise_for_status()
@@ -372,5 +394,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
