@@ -2,3 +2,9 @@ pandas
 polars
 numpy
 python-dotenv
+matplotlib
+seaborn
+requests
+openai
+twilio
+sendgrid
