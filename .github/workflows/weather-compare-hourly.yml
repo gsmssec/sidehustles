@@ -30,11 +30,10 @@ jobs:
           TIMEZONE: ${{ secrets.TIMEZONE }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
-          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
-          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
-          TWILIO_FROM_NUMBER: ${{ secrets.TWILIO_FROM_NUMBER }}
-          SMS_TO_NUMBER: ${{ secrets.SMS_TO_NUMBER }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          WEATHER_HTTP_RETRIES: ${{ secrets.WEATHER_HTTP_RETRIES }}
+          WEATHER_CONNECT_TIMEOUT_SEC: ${{ secrets.WEATHER_CONNECT_TIMEOUT_SEC }}
+          WEATHER_READ_TIMEOUT_SEC: ${{ secrets.WEATHER_READ_TIMEOUT_SEC }}
         run: python weather_compare_bot.py

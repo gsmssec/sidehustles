@@ -6,5 +6,4 @@ matplotlib
 seaborn
 requests
 openai
-twilio
 sendgrid
