@@ -291,28 +291,6 @@ def summarize_with_openai(payload: dict[str, Any]) -> str:
         return _fallback_summary(payload)
 
 
-def send_sms(summary: str) -> None:
-    account_sid = os.getenv("TWILIO_ACCOUNT_SID")
-    auth_token = os.getenv("TWILIO_AUTH_TOKEN")
-    from_number = os.getenv("TWILIO_FROM_NUMBER")
-    to_number = os.getenv("SMS_TO_NUMBER")
-
-    required = {
-        "TWILIO_ACCOUNT_SID": account_sid,
-        "TWILIO_AUTH_TOKEN": auth_token,
-        "TWILIO_FROM_NUMBER": from_number,
-        "SMS_TO_NUMBER": to_number,
-    }
-    missing = [k for k, v in required.items() if not v]
-    if missing:
-        raise ValueError(f"Missing Twilio env vars: {', '.join(missing)}")
-
-    from twilio.rest import Client
-
-    client = Client(account_sid, auth_token)
-    client.messages.create(body=summary, from_=from_number, to=to_number)
-
-
 def send_email(summary: str, details: str) -> None:
     api_key = os.getenv("SENDGRID_API_KEY")
     from_email = os.getenv("EMAIL_FROM")
@@ -386,9 +364,6 @@ def main() -> None:
     summary = summarize_with_openai(payload)
     details = _format_details(payload, summary)
 
-    logging.info("Sending SMS notification")
-    send_sms(summary)
-
     logging.info("Sending email notification")
     send_email(summary, details)
 
@@ -397,3 +372,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
