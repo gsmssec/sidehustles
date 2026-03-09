@@ -77,10 +77,33 @@ def _validate_canadian_city(result: dict[str, Any], city_name: str) -> None:
         raise ValueError(f"City '{city_name}' is not in Canada based on geocoding results.")
 
 
-def _get_json(url: str, params: dict[str, Any]) -> dict[str, Any]:
+def _requests_session() -> Any:
     import requests
+    from requests.adapters import HTTPAdapter
+    from urllib3.util.retry import Retry
 
-    response = requests.get(url, params=params, timeout=20)
+    total_retries = int(os.getenv("WEATHER_HTTP_RETRIES", "3"))
+    retry = Retry(
+        total=total_retries,
+        connect=total_retries,
+        read=total_retries,
+        backoff_factor=1.0,
+        status_forcelist=(429, 500, 502, 503, 504),
+        allowed_methods=("GET",),
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+
+    session = requests.Session()
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    return session
+
+
+def _get_json(url: str, params: dict[str, Any]) -> dict[str, Any]:
+    connect_timeout = float(os.getenv("WEATHER_CONNECT_TIMEOUT_SEC", "10"))
+    read_timeout = float(os.getenv("WEATHER_READ_TIMEOUT_SEC", "45"))
+    session = _requests_session()
+    response = session.get(url, params=params, timeout=(connect_timeout, read_timeout))
     response.raise_for_status()
     return response.json()
 
@@ -374,4 +397,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
