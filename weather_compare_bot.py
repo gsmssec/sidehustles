@@ -122,8 +122,8 @@ def _requests_session() -> Any:
 
 
 def _get_json(url: str, params: dict[str, Any]) -> dict[str, Any]:
-    connect_timeout = _env_float("WEATHER_CONNECT_TIMEOUT_SEC", 10.0)
-    read_timeout = _env_float("WEATHER_READ_TIMEOUT_SEC", 45.0)
+    connect_timeout = _env_float("WEATHER_CONNECT_TIMEOUT_SEC", 30.0)
+    read_timeout = _env_float("WEATHER_READ_TIMEOUT_SEC", 80.0)
     session = _requests_session()
     response = session.get(url, params=params, timeout=(connect_timeout, read_timeout))
     response.raise_for_status()
