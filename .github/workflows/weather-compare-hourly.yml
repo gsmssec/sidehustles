@@ -3,7 +3,7 @@ name: Weather Compare Hourly
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 13 * * *'
 
 jobs:
   weather-compare:
